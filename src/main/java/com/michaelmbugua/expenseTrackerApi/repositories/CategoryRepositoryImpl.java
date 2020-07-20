@@ -24,6 +24,11 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     public static final String SQL_CREATE = "INSERT INTO et_categories (user_id, title, description) values(?,?,?)";
 
+    public static final String SQL_FIND_ALL = "SELECT c.category_id, c.user_id, c.title, c.description, " +
+            "COALESCE(SUM(t.amount), 0) total_expense " +
+            "FROM et_transactions t RIGHT OUTER JOIN et_categories c on c.category_id = t.category_id " +
+            "WHERE c.user_id = ? GROUP BY c.category_id";;
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -62,16 +67,19 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public List<Category> findAll(Integer userId) throws EtResourceNotFoundException {
-        return null;
+        try {
+            return jdbcTemplate.query(SQL_FIND_ALL, new Object[]{userId}, categoryRowMapper);
+        } catch (Exception e){
+            throw new EtResourceNotFoundException("Categories not found");
+        }
     }
 
     @Override
     public Category findById(Integer userId, Number categoryId) throws EtResourceNotFoundException {
         try {
-            System.out.println(userId + ", " + categoryId);
             return jdbcTemplate.queryForObject(SQL_FIND_BY_ID, new Object[]{userId, categoryId}, categoryRowMapper);
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Category not found" + e);
+            throw new EtResourceNotFoundException("Category not found");
         }
     }
 

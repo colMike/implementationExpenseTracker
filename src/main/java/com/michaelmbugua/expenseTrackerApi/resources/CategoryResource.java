@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -18,10 +19,27 @@ public class CategoryResource {
     CategoryService categoryService;
 
     @GetMapping("")
-    public String getAllCategories(HttpServletRequest request) {
+    public ResponseEntity<List<Category>> getAllCategories(HttpServletRequest request) {
         int userId = (Integer) request.getAttribute("userId");
-        return "Authenticated. User id: " + userId;
+        List<Category> categories = categoryService.fetchAllCategories(userId);
+
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<Category> getCategoryById(
+            HttpServletRequest request,
+            @PathVariable("categoryId") Integer categoryId) {
+
+        System.out.println(request);
+        int userId = (Integer) request.getAttribute("userId");
+
+        Category category = categoryService.fetchCategoryById(userId, categoryId);
+
+        return new ResponseEntity<>(category, HttpStatus.OK);
+
+    }
+
 
     @PostMapping("")
     public ResponseEntity<Category> addCategory(
