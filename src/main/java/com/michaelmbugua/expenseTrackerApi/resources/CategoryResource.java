@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,5 +55,23 @@ public class CategoryResource {
 
         return new ResponseEntity<>(category, HttpStatus.CREATED);
     }
+
+
+    @PutMapping("/{categoryId}")
+    public ResponseEntity<Map<String, Boolean>> updateCategory(
+            HttpServletRequest request,
+            @PathVariable("categoryId") Integer categoryId,
+            @RequestBody Category category
+            ){
+
+        int userId = (Integer) request.getAttribute("userId");
+        categoryService.updateCategory(userId, categoryId, category);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("Success", true);
+
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
 
 }
