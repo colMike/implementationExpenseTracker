@@ -1,4 +1,4 @@
-package com.michaelmbugua.expenseTrackerApi.domain.filter;
+package com.michaelmbugua.expenseTrackerApi.filter;
 
 import com.michaelmbugua.expenseTrackerApi.Constants;
 import io.jsonwebtoken.Claims;
